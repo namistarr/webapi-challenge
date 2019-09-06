@@ -59,32 +59,53 @@ router.get('/:id/actions', (req, res) => {
 router.post('/', (req, res) => {
     const project = req.body;
 
-    projectDb.insert(project)
-        .then(newProject => {
-            res.status(201).json(newProject);
-        })
-        .catch(error => {
-            res.status(500).json({
-                error: 'There was an error adding the project.'
-            })
-        })
+    if(project.name && project.description) {
+        projectDb.insert(project)
+            .then(newProject => {
+                res.status(201).json(newProject);
+            })            
+            .catch(error => {
+                res.status(500).json({
+                    error: 'There was an error adding the project.'
+                });
+            });
+    }
+    else {
+        res.status(400).json({
+            error: 'Please provide a project name and description.'
+        });
+    };
 })
+
 
 //PUT edit project
 router.put('/:id', (req, res) => {
     const id = req.params.id;
     const edits = req.body;
 
-    projectDb.update(id, edits)
-        .then(updatedProject => {
-            res.status(201).json(updatedProject);
+    if (!edits.name || !edits.description) {
+        res.status(400).json({
+            error: 'Please provide name and description for the project.'
         })
-        .catch(error => {
+    } else {
+        projectDb.update(id, edits)
+        .then((updatedProject) => {
+            if (updatedProject) {
+                res.status(200).json(updatedProject)
+            } else {
+                res.status(404).json({
+                    error: 'The project with the specified ID does not exist.'
+                })
+            }
+        })
+        .catch(() => {
             res.status(500).json({
-                error: 'There was an error editing the project.'
+                error: 'There was en error editing the project.'
             })
         })
+    }
 })
+
 
 //DELETE project
 router.delete('/:id', (req, res) => {
