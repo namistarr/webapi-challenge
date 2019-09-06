@@ -52,7 +52,9 @@ router.put('/:id', (req, res) => {
             res.status(201).json(results)
         })
         .catch(error => {
-            res.status(500).json(error)
+            res.status(500).json({
+                error: 'There was en error editing the action.'
+            })
         })
 })
 
@@ -65,7 +67,9 @@ router.delete('/:id', (req, res) => {
             res.status(201).json(results)
         })
         .catch(error => {
-            res.status(500).json(error) 
+            res.status(500).json({
+                error: 'There was an error deleting the action.'
+            }) 
         })
 });
 
