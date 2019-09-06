@@ -29,12 +29,15 @@ router.get('/:id', (req, res) => {
 
 //POST action
 router.post('/', (req, res) => {
-    const id = req.body.project_id;
-    const notes = req.body.notes;
-    const desc = req.body.description;
+    const { project_id, notes, description, completed } = req.body;
 
-    if(action.id && action.notes && action.desc) {
-        actionDb.insert(id, notes, desc)
+    if(
+        typeof project_id === 'number' 
+        && typeof notes === 'string'
+        && typeof description === 'string'
+    ) {
+        const defaultCompleted = (typeof completed === 'boolean') ? completed : false
+        actionDb.insert({project_id, notes, description, completed:defaultCompleted})
             .then(newAction => {
                 res.status(201).json(newAction);
             })            
@@ -42,37 +45,42 @@ router.post('/', (req, res) => {
                 res.status(500).json({
                     error: 'There was an error adding the project action.'
                 });
-            });
+            });      
     }
     else {
         res.status(400).json({
-            error: 'Missing required project id, name, or description.'
+            error: 'Missing required project id, notes, or description.'
         });
-    };
+    }
 })
+
 
 //PUT edit action
 router.put('/:id', (req, res) => {
-    const id = req.body.project_id;
-    const notes = req.body.notes;
-    const desc = req.body.description;
+     const { project_id, notes, description, completed } = req.body;
 
-    if(action.id && action.notes && action.desc) {
-        actionDb.update(id, notes, desc)
+    if(
+        typeof project_id === 'number' 
+        && typeof notes === 'string'
+        && typeof description === 'string'
+    ) {
+        const defaultCompleted = (typeof completed === 'boolean') ? completed : false
+        actionDb.update({ project_id, notes, description, completed:defaultCompleted })
             .then(updatedAction => {
                 res.status(201).json(updatedAction);
             })            
             .catch(error => {
                 res.status(500).json({
-                    error: 'There was an error editing the project action.'
+                        error: 'There was an error editing the project action.'
                 });
             });
-    }
+
+    }    
     else {
         res.status(400).json({
-            error: 'Missing required project id, name, or description.'
+            error: 'Missing required project id, notes, or description.'
         });
-    };
+    }
 })
 
 
