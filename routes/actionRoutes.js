@@ -29,34 +29,53 @@ router.get('/:id', (req, res) => {
 
 //POST action
 router.post('/', (req, res) => {
-    const action = req.body;
+    const id = req.body.project_id;
+    const notes = req.body.notes;
+    const desc = req.body.description;
 
-    actionDb.insert(action) 
-        .then(newAction => {
-            res.status(200).json(newAction)
-        })
-        .catch(error => {
-            res.status(500).json({
-                error: 'There was an error adding the action.'
-            })
-        })
+    if(action.id && action.notes && action.desc) {
+        actionDb.insert(id, notes, desc)
+            .then(newAction => {
+                res.status(201).json(newAction);
+            })            
+            .catch(error => {
+                res.status(500).json({
+                    error: 'There was an error adding the project action.'
+                });
+            });
+    }
+    else {
+        res.status(400).json({
+            error: 'Missing required project id, name, or description.'
+        });
+    };
 })
 
 //PUT edit action
 router.put('/:id', (req, res) => {
-    const id = req.params.id;
-    const edits = req.body;
+    const id = req.body.project_id;
+    const notes = req.body.notes;
+    const desc = req.body.description;
 
-    actionDb.update(id, edits) 
-        .then(results => {
-            res.status(201).json(results)
-        })
-        .catch(error => {
-            res.status(500).json({
-                error: 'There was en error editing the action.'
-            })
-        })
+    if(action.id && action.notes && action.desc) {
+        actionDb.update(id, notes, desc)
+            .then(updatedAction => {
+                res.status(201).json(updatedAction);
+            })            
+            .catch(error => {
+                res.status(500).json({
+                    error: 'There was an error editing the project action.'
+                });
+            });
+    }
+    else {
+        res.status(400).json({
+            error: 'Missing required project id, name, or description.'
+        });
+    };
 })
+
+
 
 //DELETE action
 router.delete('/:id', (req, res) => {
